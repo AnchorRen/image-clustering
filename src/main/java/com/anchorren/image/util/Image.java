@@ -1,27 +1,51 @@
 package com.anchorren.image.util;
 
+import java.awt.Color;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.Arrays;
 
+import javax.imageio.ImageIO;
+
+import com.anchorren.image.bean.HSV;
+import com.anchorren.image.bean.RGB;
+
 /**
- * Í¼Ïñ´¦Àí»ùÀà
+ * å›¾åƒå¤„ç†åŸºç±»
  * 
  * @author REN
- * @time:2017Äê3ÔÂ19ÈÕ ÏÂÎç2:09:43
+ * @time:2017å¹´3æœˆ19æ—¥ ä¸‹åˆ2:09:43
  */
 public class Image {
 
-	public int h; // ¸ß
-	public int w; // ¿í
-	public int[] data; // ÏñËØ
-	public boolean isGray; // ÊÇ·ñÎª»Ò¶ÈÍ¼Ïñ
+	public int h; // é«˜
+	public int w; // å®½
+	public int[] data; // åƒç´ 
+	public boolean isGray; // æ˜¯å¦ä¸ºç°åº¦å›¾åƒ
 
 	public Image(BufferedImage img) {
 
 		this.h = img.getHeight();
 		this.w = img.getWidth();
 
-		this.data = img.getRGB(0, 0, w, h, null, 0, w); // »ñÈ¡RGBÑÕÉ«¾ØÕó
+		this.data = img.getRGB(0, 0, w, h, null, 0, w); // è·å–RGBé¢œè‰²çŸ©é˜µ
+		this.isGray = false;
+	}
+	
+	public Image(String imagePath) {
+		
+		File file = new File(imagePath);
+		BufferedImage img = null;
+		try {
+			img = ImageIO.read(file);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		this.h = img.getHeight();
+		this.w = img.getWidth();
+
+		//this.data = img.getRGB(0, 0, w, h, null, 0, w); // è·å–RGBé¢œè‰²çŸ©é˜µ
 		this.isGray = false;
 	}
 
@@ -36,9 +60,10 @@ public class Image {
 	public Image(int h, int w) {
 		this(null, h, w);
 	}
-
+	
+	
 	/**
-	 * ½«IntÊı×é×ª»¯ÎªImage·½·¨
+	 * å°†Intæ•°ç»„è½¬åŒ–ä¸ºImageæ–¹æ³•
 	 * 
 	 * @return
 	 */
@@ -60,7 +85,7 @@ public class Image {
 	}
 
 	/**
-	 * ×ª»¯Îª»Ò¶È¾ØÕó
+	 * è½¬åŒ–ä¸ºç°åº¦çŸ©é˜µ
 	 */
 	public void toGray() {
 

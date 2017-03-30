@@ -11,13 +11,28 @@ import com.anchorren.image.bean.HSV;
 import com.anchorren.image.bean.RGB;
 
 public class ImageUtil {
+	
+	
+	
+	public static void main(String[] args) throws Exception {
+		
+		String imgPath = "";
+		int[] hist = getImageHSVHist(imgPath);
+		System.out.println(hist);
+	}
 
 	/**
-	 * 
+	 * 获取输入图像的HSV颜色直方图
+	 * 步骤：
+	 * 		1）.输入图像，获取每一个像素的RGB颜色
+	 * 		2）.将RGB转换为HSV（HSB）颜色空间
+	 * 		3）.将HSV进行非均匀量化。H（7级）、S（3级）、V（3级）
+	 * 		4）.将量化后结果按照公式( L = 9H + 3S + V ) 组合成63种颜色空间。
+	 * 		5) .计算图像在L下的颜色直方图
 	 * @param image
 	 * @throws Exception
 	 */
-	public static void getImagePixel(String image) throws Exception {
+	public static int[] getImageHSVHist(String image) throws Exception {
 		//int[] rgb = new int[3];
 		RGB rgb = new RGB();
 		File file = new File(image);
@@ -32,27 +47,48 @@ public class ImageUtil {
 		int height = bi.getHeight();
 		int minx = bi.getMinX();
 		int miny = bi.getMinY();
-
+		int[] hist = new int[63]; //存储量化后的63级HSV颜色
 		System.out.println("width=" + width + ",height=" + height + ".");
 		System.out.println("minx=" + minx + ",miniy=" + miny + ".");
 		for (int i = minx; i < width; i++) {
 			for (int j = miny; j < height; j++) {
-				int pixel = bi.getRGB(i, j); // 下面三行代码将一个数字转换为RGB数字
-				rgb.red = (pixel & 0xff0000) >> 16;
-				rgb.green = (pixel & 0xff00) >> 8;
-				rgb.blue = (pixel & 0xff);
+				try {
+					int pixel = bi.getRGB(i, j); // 下面三行代码将一个数字转换为RGB数字
+					rgb.red = (pixel & 0xff0000) >> 16;
+					rgb.green = (pixel & 0xff00) >> 8;
+					rgb.blue = (pixel & 0xff);
+				} catch (Exception e) {
+					System.out.println("ERROR: i = " + i +" ; j = " + j );
+					e.printStackTrace();
+				}
 				
-				hsbvals = Color.RGBtoHSB(rgb.red, rgb.green, rgb.blue, hsbvals);
+				hsbvals = Color.RGBtoHSB(rgb.red, rgb.green, rgb.blue, hsbvals); //RGB转HSV
 
-				HSV hsv = HSLQuantization(hsbvals);
-				int L = getLFromHSV(hsv);
-				System.out.println("i=" + i + ",j=" + j + ":(" + rgb.red + "," + rgb.green + "," + rgb.blue + ") --> "
-						+ "(" + hsv.getH() + "," + hsv.getS() + "," + hsv.getV() + ") --> L = " + L);
+				HSV hsv = HSLQuantization(hsbvals); //HSV非均匀量化
+				int L = getLFromHSV(hsv); //HSV颜色组合
+		        hist[L]++;  //颜色直方图
+				
+				/*System.out.println("i=" + i + ",j=" + j + ":(" + rgb.red + "," + rgb.green + "," + rgb.blue + ") --> "
+						+ "(" + hsv.getH() + "," + hsv.getS() + "," + hsv.getV() + ") --> L = " + L);*/
 				
 			}
 		}
+		return hist;
 	}
-	
+	/**
+	 * 获取图像颜色直方图
+	 * @return
+	 */
+/*	public int[] hist(){  
+       // toGray();  
+        int[] hist = new int[256];  
+        int len = h*w;  
+          
+        for(int i=0;i<len;i++)  
+            hist[data[i]]++;  
+        return hist;  
+    }  
+	*/
 	/**
 	 * L = 9H + 3S + V 
 	 * @param hsl
@@ -103,7 +139,7 @@ public class ImageUtil {
 			S = 2;
 		}
 		
-		//L 费均匀量化
+		//L 非均匀量化
 		if(0 <= V && V <= 0.2){
 			V = 0;
 		}else if(0.2 < V && V <= 0.7){

@@ -1,22 +1,45 @@
 package com.anchorren.image.test;
 
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.util.Arrays;
 
-import javax.imageio.ImageIO;
-
-import com.anchorren.image.util.ImageUtil;
+import Texture.TextureTool;
 
 public class RGBtoHSV {
 
 	public static void main(String[] args) throws Exception {
 		
 		
-		ImageUtil.getImagePixel("E:\\shiyan\\23\\S_2.png");
+		TextureTool tool  = new TextureTool();
+		// Object[] texture = tool.Texture(1, "F:\\snaps\\images\\wms\\2\\2_1.png");
+		 Object[] texture = tool.Texture(1, "F:\\snaps\\images\\wms\\2\\2_1.png");
+		 System.out.println("length:" + texture.length);
+		 System.out.println(texture);
+		 for(int i = 0; i < texture.length ; i ++){
+			 System.out.println(texture[i]);
+		 }
+		 String[] split = texture[0].toString().split(" ");
+		 String[] result = new String[8];
+		 int i = 0;
+		 for (String string : split) {
+			 if(string.trim().length() >= 6){
+				 result[i++] = string.trim();
+			 }
+		}
+		 System.out.println(Arrays.toString(result));
+
 		
+		/*String paths = System.getProperty("java.library.path");
+		String[] pathArr = paths.split(";");
+		for (String string : pathArr) {
+			
+			System.out.println(string);
+		}*/
+		/*TextureTool texture = new TextureTool();
+		Object[] array = texture.Texture(1, "E:\\shiyan\\23\\S_2.png");
+		System.out.println(Arrays.toString(array));*/
+	/*	String imgPath = "E:\\shiyan\\23\\S_2.png";
+		int[] hist = ImageUtil.getImageHSVHist(imgPath);
+		System.out.println(Arrays.toString(hist));*/
 		
 	/*	BufferedImage img = null;
 		try {
@@ -34,13 +57,13 @@ public class RGBtoHSV {
 		
 		int width=img.getWidth();  
 		int height=img.getHeight();  
-		int imaRGB[][]=new int[width][height];//´æ·ÅRGBÐÅÏ¢Êý×é£¬ÖØµã  
+		int imaRGB[][]=new int[width][height];//ï¿½ï¿½ï¿½RGBï¿½ï¿½Ï¢ï¿½ï¿½ï¿½é£¬ï¿½Øµï¿½  
 		  
-		//´ÓbufIma¶ÁÈ¡RGBµ½Êý×éÖÐ  
+		//ï¿½ï¿½bufImaï¿½ï¿½È¡RGBï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½  
 		for(int i=0;i<width;i++){
 			
 			for(int j=0;j<height;j++)  
-				imaRGB[i][j]=img.getRGB(i,j)&0xFFFFF;//²»Ì«¶®  
+				imaRGB[i][j]=img.getRGB(i,j)&0xFFFFF;//ï¿½ï¿½Ì«ï¿½ï¿½  
 		}
 		
 		for(int i = 0 ; i < imaRGB.length ; i ++  ){
